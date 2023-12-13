@@ -51,37 +51,35 @@
       <text class="svgLabels" id="load-paramNeg">-</text>
     </svg>
     <div id="left-column">
-      <button id="powerButton">Power</button>
-      <p>230V AC</p>
-      <p id="smpsLabel">SMPS Based Battery Charger</p>
+      <div class="powerSupply-box">
+        <button id="powerButton">Power</button>
+        <p>230V AC</p>
+        <p id="smpsLabel">SMPS Based Battery Charger</p>
+      </div>
+      <div id="speedControl">
+        <p class="speedControlLabel">220V-240V -> 24V SMPS</p>
+        <img src="knob.png" id="knob" class="knob-img">
+        <p class="speedControlLabel">Speed Control</p>
+      </div>
     </div>
     <div id="center-column">
       <div id="battery-parameters">
-        <h2>Battery Parameters</h2>
         <div id="parameters-stats">
-          <div id="stats">
-            <p id="voltageStat">Voltage: 0V</p>
-            <p id="currentStat">Current: 0A</p>
-            <p id="socStat">SOC: 0%</p>
-            <p id="dodStat">DOD: 100%</p>
-            <div class="battery">
-              <div id="battery-container">
-                  <div id="progressBar"></div>
-              </div>
-              <div class="batteryHead"></div>
-            </div>
-            <p id="batteryStat">Battery Status: Not Charging</p>
-          </div>
           <div id="chart-container">
             <canvas id="voltageChart"></canvas>
           </div>
         </div>
       </div>
-      <span id="batteryLabel">
-        <p>Lead-Acid Battery Pack</p>
-        <p>7500mAh, 12V</p>
-      </span>
-      <span id="parametersLabel"><p>Measurement of Battery Parameters</p></span>
+      <div id="switchCircuit-box">
+        <p id="switchCircuitLabel">SPDT Switch</p>
+      </div>
+      <div id="current-box">
+        <p id="currentLabel">0.00A</p>
+      </div>
+      <div id="motor-box">
+        <img src="tire.png" id="tire" class="tire-img">
+        <p>PMSM Motor</p>
+      </div>
     </div>
     <div id="right-column">
       <div id="meters-container">

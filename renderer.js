@@ -10,15 +10,15 @@ function drawLines() {
   var smpsPositionY = document.getElementById('smpsLabel').getBoundingClientRect().top + window.scrollY;
   var smpsPositionXR = document.getElementById('smpsLabel').getBoundingClientRect().right + window.scrollX;
 
-  var paramPositionX = document.getElementById('parametersLabel').getBoundingClientRect().left + window.scrollX;
-  var paramPositionXL = document.getElementById('parametersLabel').getBoundingClientRect().left + window.scrollX + 50;
-  var paramPositionXR = document.getElementById('parametersLabel').getBoundingClientRect().right + window.scrollX - 50;
-  var paramPositionYT = document.getElementById('parametersLabel').getBoundingClientRect().top + window.scrollY + 20;
-  var paramPositionYB = document.getElementById('parametersLabel').getBoundingClientRect().bottom + window.scrollY - 20;
+  var paramPositionX = document.getElementById('motor-box').getBoundingClientRect().left + window.scrollX;
+  var paramPositionXL = document.getElementById('motor-box').getBoundingClientRect().left + window.scrollX + 50;
+  var paramPositionXR = document.getElementById('motor-box').getBoundingClientRect().right + window.scrollX - 50;
+  var paramPositionYT = document.getElementById('motor-box').getBoundingClientRect().top + window.scrollY + 20;
+  var paramPositionYB = document.getElementById('motor-box').getBoundingClientRect().bottom + window.scrollY - 20;
 
-  var batteryPositionXL = document.getElementById('batteryLabel').getBoundingClientRect().left + window.scrollX + 50;
-  var batteryPositionXR = document.getElementById('batteryLabel').getBoundingClientRect().right + window.scrollX - 50;
-  var batteryPositionY = document.getElementById('batteryLabel').getBoundingClientRect().bottom + window.scrollY;
+  var batteryPositionXL = document.getElementById('current-box').getBoundingClientRect().left + window.scrollX + 50;
+  var batteryPositionXR = document.getElementById('current-box').getBoundingClientRect().right + window.scrollX - 50;
+  var batteryPositionY = document.getElementById('current-box').getBoundingClientRect().bottom + window.scrollY;
 
   var loadPositionX = document.getElementById('load-section').getBoundingClientRect().left + window.scrollX + 50;
   var loadPositionYT = document.getElementById('load-section').getBoundingClientRect().bottom + window.scrollY - 80;
@@ -127,34 +127,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const maxBatteryLevel = 100;
   const voltageCoefficient = 12.2 / maxBatteryLevel; // To calculate voltage based on battery level
 
-  const ammeter = new JustGage({
-    id: 'ammeter',
-    value: 0, // Start with 0A
-    min: 0,
-    max: 100, // Set this to a maximum current you expect
-    title: 'Current',
-    label: 'A',
-    labelFontColor: '#000',
-    gaugeColor: '#303030',
-    decimals: true,
-    pointer: true
-  });
 
   // Initialize the voltmeter with a value of 0 because the power is off
-  const voltmeter = new JustGage({
-    id: 'voltmeter',
-    value: 0, // Start with 0V
-    min: 0,
-    max: 20,
-    title: 'Voltage',
-    label: 'V',
-    labelFontColor: '#000',
-    gaugeColor: '#303030',
-    decimals: true,
-    pointer: true,
-    
-  });
-
   const ctx = document.getElementById('voltageChart').getContext('2d');
   voltageChart = new Chart(ctx, {
     type: 'line',
@@ -195,8 +169,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Calculate the total power consumed by the lights
     const totalPower = lightsOn * 21; // Assuming each light consumes 21W
     const current = voltage > 0 ? totalPower / voltage : 0; // Avoid division by zero
-    
-    ammeter.refresh(current);
   }
   
   setInterval(() => {
@@ -209,7 +181,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // Function to update the voltmeter based on the current battery level
   function updateVoltmeter() {
     currentVoltage = batteryLevel * voltageCoefficient;
-    voltmeter.refresh(currentVoltage);
     updateAmmeter(); // Update the ammeter at the same time
   }
 
