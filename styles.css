@@ -226,6 +226,16 @@ header {
   margin: 0;
 }
 
+@keyframes rotateTire {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.rotating {
+  animation: rotateTire 1s linear infinite;
+}
+
+
 #circuitMotor {
   display: flex;
   flex-direction: column;

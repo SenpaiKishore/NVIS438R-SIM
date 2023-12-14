@@ -2,6 +2,7 @@ let voltageData = [];
 let timeData = [];
 let voltageChart;
 let currentVoltage = 0;
+let speedPercentage  = 50;
 
 function drawLines() {
    // Drawing the circuit
@@ -15,8 +16,6 @@ function drawLines() {
   var spdtPositionY = document.getElementById('switchCircuit-box').getBoundingClientRect().bottom + window.scrollY - 20;
 
   var motorPositionX = document.getElementById('circuitMotor').getBoundingClientRect().left + window.scrollX + 105;
-  var motorPositionXL = document.getElementById('circuitMotor').getBoundingClientRect().left + window.scrollX + 50;
-  var motorPositionXR = document.getElementById('circuitMotor').getBoundingClientRect().right + window.scrollX - 50;
   var motorPositionYT = document.getElementById('circuitMotor').getBoundingClientRect().top + window.scrollY + 20;
   var motorPositionYB = document.getElementById('circuitMotor').getBoundingClientRect().bottom + window.scrollY + 10;
 
@@ -113,17 +112,78 @@ function drawLines() {
 
 document.addEventListener('DOMContentLoaded', () => {
   const powerButton = document.getElementById('powerButton');
-  const progressBar = document.getElementById('progressBar');
-  const lightButtons = document.querySelectorAll('.lightButton');
 
   let isPowerOn = false;
-  let intervalId;
-  let batteryLevel = 0; // Start with an empty battery
+  const knob = document.getElementById('knob');
+  let isDragging = false;
+  let startY = 0;
+  let tireRotation = 0;
+  let currentRotation = 0;
+  const tire = document.getElementById('tire');
 
-  const batteryDischargeRate = 0.5; // Percent per second
-  const batteryChargeRate = 10; // Percent per second
-  const maxBatteryLevel = 100;
-  const voltageCoefficient = 12.2 / maxBatteryLevel; // To calculate voltage based on battery level
+  function getRotationDegrees(yMove) {
+    // Calculate rotation, with 1 pixel movement corresponding to 1 degree of rotation
+    const degreesPerPixel = 180 / 100; // assuming 100 pixels movement for full range
+    return yMove * degreesPerPixel;
+  }
+
+  function animateTire() {
+    if (isPowerOn && speedPercentage > 0) {
+      // The base speed determines how fast the tire rotates at 100% speed
+      const baseSpeed = 0.5; // degrees per animation frame
+      // Adjust the speed based on the knob's percentage (linear scaling)
+      const speedAdjustment = (speedPercentage / 100) * baseSpeed;
+      tireRotation += speedAdjustment;
+      tireRotation = tireRotation % 360; // Keep the rotation angle within [0, 360]
+      tire.style.transform = `rotate(${tireRotation}deg)`;
+
+      requestAnimationFrame(animateTire); // Continue the animation loop
+    }
+  }
+
+  function updateKnob(value) {
+    // Clamp the value to the range -90 to 90
+    value = Math.max(-90, Math.min(90, value));
+    // Apply rotation to the knob
+    knob.style.transform = `rotate(${value}deg)`;
+    // Convert the angle to a percentage and log it
+    speedPercentage = (value + 90) / 180 * 100;
+    if (isPowerOn) {
+      requestAnimationFrame(animateTire);
+    }
+    console.log(`Knob value: ${speedPercentage.toFixed(2)}%`);
+  }
+
+  knob.addEventListener('mousedown', event => {
+    isDragging = true;
+    startY = event.clientY;
+    // Cancel any text selection
+    document.body.style.userSelect = 'none';
+    event.preventDefault(); // Prevent default drag behavior
+  });
+
+  document.addEventListener('mousemove', event => {
+    if (isDragging) {
+      const deltaY = event.clientY - startY;
+      // Calculate the new rotation based on deltaY
+      const newRotation = currentRotation - getRotationDegrees(deltaY);
+      // Update the knob with the new rotation
+      updateKnob(newRotation);
+    }
+  });
+
+  document.addEventListener('mouseup', event => {
+    if (isDragging) {
+      // Finalize the rotation value
+      const deltaY = event.clientY - startY;
+      currentRotation -= getRotationDegrees(deltaY);
+      currentRotation = Math.max(-90, Math.min(90, currentRotation)); // Clamp final rotation
+      updateKnob(currentRotation); // Update for the last time
+      isDragging = false;
+      // Restore text selection
+      document.body.style.userSelect = '';
+    }
+  });
 
 
   // Initialize the voltmeter with a value of 0 because the power is off
@@ -159,130 +219,26 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-
-  function updateAmmeter() {
-    const voltage = batteryLevel * voltageCoefficient;
-    const lightsOn = document.querySelectorAll('.lightButton.active').length;
-    
-    // Calculate the total power consumed by the lights
-    const totalPower = lightsOn * 21; // Assuming each light consumes 21W
-    const current = voltage > 0 ? totalPower / voltage : 0; // Avoid division by zero
-  }
-  
   setInterval(() => {
     const now = new Date().toLocaleTimeString();
     timeData.push(now);
     voltageData.push(currentVoltage);
     voltageChart.update();
-  }, 500); // 500 ms interval
-
-  // Function to update the voltmeter based on the current battery level
-  function updateVoltmeter() {
-    currentVoltage = batteryLevel * voltageCoefficient;
-    updateAmmeter(); // Update the ammeter at the same time
-  }
-
-  function updateStats() {
-    const voltage = batteryLevel * voltageCoefficient;
-    const lightsOn = document.querySelectorAll('.lightButton.active').length;
-    const totalPower = lightsOn * 21; // Assuming each light consumes 21W
-    const current = voltage > 0 ? totalPower / voltage : 0;
-    
-    const soc = batteryLevel; // Assuming SOC is directly proportional to battery level
-    const dod = 100 - soc; // DOD is the complement of SOC 
-  
-  }
-  
-
-  // Function to update the battery level and progress bar
-  function updateBatteryLevel(delta) {
-    batteryLevel += delta;
-    batteryLevel = Math.max(0, Math.min(maxBatteryLevel, batteryLevel)); // Keep battery level within bounds
-    progressBar.style.width = `${batteryLevel}%`;
-    updateVoltmeter();
-    updateStats();
-  }
+  }, 500);
 
   // Event listener for the power button
   powerButton.addEventListener('click', () => {
     isPowerOn = !isPowerOn;
     powerButton.style.backgroundColor = isPowerOn ? 'red' : 'white';
     powerButton.style.color = isPowerOn ? 'white' : 'red';
-    document.getElementById("batteryStat").textContent = isPowerOn ? 'Battery Status: Charging' : 'Battery Status: Not Charging';
-    managePowerState();
-  });
-
-  // Function to manage power state and battery charging/discharging
-  function managePowerState() {
-    clearInterval(intervalId); // Clear any existing interval
-
     if (isPowerOn) {
-      intervalId = setInterval(() => {
-        // Charge the battery if no lights are active
-        updateBatteryLevel(batteryChargeRate / 10);
-        // Check for battery full
-        if (batteryLevel >= maxBatteryLevel) {
-          batteryLevel = maxBatteryLevel;
-          clearInterval(intervalId);
-          alert('Battery charged to 100%');
-        }
-      }, 100); // Update 10 times per second
+      requestAnimationFrame(animateTire);
     } else {
-      updateVoltmeter(); // Update voltmeter to 0 when power is off
+      tire.style.transform = 'none'; // Reset the rotation
+      tireRotation = 0; // Reset the rotation angle
     }
-    updateStats();
-  }
-
-  // Function to manage light state and battery discharging
-  function manageLightState() {
-    clearInterval(intervalId); // Clear any existing interval
-
-    intervalId = setInterval(() => {
-        const lightsOn = document.querySelectorAll('.lightButton.active').length;
-        if (lightsOn > 0) {
-            updateBatteryLevel(-batteryDischargeRate * lightsOn / 10);
-            document.getElementById("batteryStat").textContent = 'Battery Status: Discharging';
-        } else if (isPowerOn) {
-            updateBatteryLevel(batteryChargeRate / 10);
-        } else{
-          document.getElementById("batteryStat").textContent = 'Battery Status: Idle';
-        } 
-        // Check for battery empty
-        if (batteryLevel <= 0) {
-            batteryLevel = 0;
-            clearInterval(intervalId);
-            alert('Battery empty');
-            lightButtons.forEach(button => button.classList.remove('active')); // Turn off all lights
-        }
-    }, 100); // Update 10 times per second
-
-    updateAmmeter(); // Update the ammeter reading here
-    updateStats();
-  }
-
-  lightButtons.forEach((button, index) => {
-    button.addEventListener('click', () => {
-        console.log("Light Clicked");
-        // Toggle the 'active' class for the button
-        const isLightOn = button.classList.toggle('active');
-
-        // Select the corresponding image
-        const lightImg = document.getElementById(`lightImg${index + 1}`);
-      
-        // Set the image source based on the button state
-        if (lightImg) {
-            lightImg.src = isLightOn ? 'lighton.png' : 'lightoff.png';
-        }
-
-        
-
-        // Call manageLightState to handle light state change
-        manageLightState();
-    });
   });
 
-  updateVoltmeter(); // Start with the voltmeter at 0V
-  updateStats();
   drawLines();
 });
 
