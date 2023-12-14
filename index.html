@@ -27,34 +27,31 @@
 
       <line class="lines" id="smpsLine1"/>
       <line class="lines" id="smpsLine2"/>
-      <line class="lines" id="smpsLine3"/>
-      <line class="lines" id="smpsLine4"/>
 
-      <line class="lines" id="batteryLine1"/>
-      <line class="lines" id="batteryLine2"/>
+      <line class="lines" id="powerLine1"/>
+      <line class="lines" id="powerLine2"/>
 
-      <line class="lines" id="loadLine1"/>
-      <line class="lines" id="loadLine2"/>
+      <line class="lines" id="motorLine1"/>
+      <line class="lines" id="motorLine2"/>
+
+      <line class="lines" id="voltLine1"/>
+      <line class="lines" id="voltLine2"/>
+
+      <line class="lines" id="lightLine1"/>
+      <line class="lines" id="lightLine2"/>
+      <line class="lines" id="lightLine3"/>
 
       <text class="svgLabels" id="main-smpsText">230v AC</text>
-      <text class="svgLabels" id="smps-paramText">12V DC to Charge Controller</text>
-      <text class="svgLabels" id="battery-paramText">To Battery</text>
-      <text class="svgLabels" id="load-paramText">To Load</text>
+      <text class="svgLabels" id="switchText1">Motoring</text>
+      <text class="svgLabels" id="switchText2">Breaking</text>
 
       <text class="svgLabels" id="main-smpsN">N</text>
       <text class="svgLabels" id="main-smpsL">L</text>
-      <text class="svgLabels" id="smps-paramPos">+</text>
-      <text class="svgLabels" id="smps-paramNeg">-</text>
-      <text class="svgLabels" id="battery-paramPos">+</text>
-      <text class="svgLabels" id="battery-paramNeg">-</text>
-      <text class="svgLabels" id="load-paramPos">+</text>
-      <text class="svgLabels" id="load-paramNeg">-</text>
     </svg>
     <div id="left-column">
       <div class="powerSupply-box">
         <button id="powerButton">Power</button>
         <p>230V AC</p>
-        <p id="smpsLabel">SMPS Based Battery Charger</p>
       </div>
       <div id="speedControl">
         <p class="speedControlLabel">220V-240V -> 24V SMPS</p>
@@ -63,12 +60,10 @@
       </div>
     </div>
     <div id="center-column">
-      <div id="battery-parameters">
-        <div id="parameters-stats">
-          <div id="chart-container">
-            <canvas id="voltageChart"></canvas>
-          </div>
-        </div>
+      <div id="switch-box">
+        <p id="switchLabel">Motoring Mode</p>
+        <img src="toggle.png" id="toggle" class="toggle-img">
+        <p id="switchLabel">Braking Mode</p>
       </div>
       <div id="switchCircuit-box">
         <p id="switchCircuitLabel">SPDT Switch</p>
@@ -76,35 +71,30 @@
       <div id="current-box">
         <p id="currentLabel">0.00A</p>
       </div>
-      <div id="motor-box">
-        <img src="tire.png" id="tire" class="tire-img">
-        <p>PMSM Motor</p>
+      <div id="circuitMotor">
+        <img src="motor.png" id="tire" class="motor-img">
       </div>
     </div>
     <div id="right-column">
-      <div id="meters-container">
-        <div id="voltmeter">
-          <p>Voltmeter</p>
-        </div>
-        <div id="ammeter">
-          <p>Ammeter</p>
+      <div id="battery-parameters">
+        <div id="parameters-stats">
+          <div id="chart-container">
+            <canvas id="voltageChart"></canvas>
+          </div>
         </div>
       </div>
       <div id="load-section">
-        <h2>Load Section</h2>
-        <div class="lights">
-          <div class="light">
-            <img src="lightoff.png" id="lightImg1" class="light-img">
-            <button class="lightButton" id="lightButton1">Light 1</button>
+        <div class="loads">
+          <div id="voltage-box">
+            <p id="voltageLabel">0.00V</p>
           </div>
           <div class="light">
-            <img src="lightoff.png" id="lightImg2" class="light-img">
-            <button class="lightButton" id="lightButton2">Light 2</button>
+            <img src="lightoff.png" id="lightImg" class="light-img">
           </div>
-          <div class="light">
-            <img src="lightoff.png" id="lightImg3" class="light-img">
-            <button class="lightButton" id="lightButton3">Light 3</button>
-          </div>
+        </div>
+        <div id="motor-box">
+          <img src="tire.png" id="tire" class="tire-img">
+          <p>PMSM Motor</p>
         </div>
       </div>
     </div>

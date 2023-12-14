@@ -6,111 +6,109 @@ let currentVoltage = 0;
 function drawLines() {
    // Drawing the circuit
   //SMPS to Parameter
-  var smpsPositionXL = document.getElementById('smpsLabel').getBoundingClientRect().left + window.scrollX;
-  var smpsPositionY = document.getElementById('smpsLabel').getBoundingClientRect().top + window.scrollY;
-  var smpsPositionXR = document.getElementById('smpsLabel').getBoundingClientRect().right + window.scrollX;
+  var smpsPositionXL = document.getElementById('powerButton').getBoundingClientRect().left + window.scrollX;
+  var smpsPositionY = document.getElementById('powerButton').getBoundingClientRect().top + window.scrollY;
+  var smpsPositionXR = document.getElementById('powerButton').getBoundingClientRect().right + window.scrollX;
 
-  var paramPositionX = document.getElementById('motor-box').getBoundingClientRect().left + window.scrollX;
-  var paramPositionXL = document.getElementById('motor-box').getBoundingClientRect().left + window.scrollX + 50;
-  var paramPositionXR = document.getElementById('motor-box').getBoundingClientRect().right + window.scrollX - 50;
-  var paramPositionYT = document.getElementById('motor-box').getBoundingClientRect().top + window.scrollY + 20;
-  var paramPositionYB = document.getElementById('motor-box').getBoundingClientRect().bottom + window.scrollY - 20;
+  var spdtPositionXL = document.getElementById('switchCircuit-box').getBoundingClientRect().left + window.scrollX;
+  var spdtPositionXR = document.getElementById('switchCircuit-box').getBoundingClientRect().right + window.scrollX;
+  var spdtPositionY = document.getElementById('switchCircuit-box').getBoundingClientRect().bottom + window.scrollY - 20;
 
-  var batteryPositionXL = document.getElementById('current-box').getBoundingClientRect().left + window.scrollX + 50;
-  var batteryPositionXR = document.getElementById('current-box').getBoundingClientRect().right + window.scrollX - 50;
-  var batteryPositionY = document.getElementById('current-box').getBoundingClientRect().bottom + window.scrollY;
+  var motorPositionX = document.getElementById('circuitMotor').getBoundingClientRect().left + window.scrollX + 105;
+  var motorPositionXL = document.getElementById('circuitMotor').getBoundingClientRect().left + window.scrollX + 50;
+  var motorPositionXR = document.getElementById('circuitMotor').getBoundingClientRect().right + window.scrollX - 50;
+  var motorPositionYT = document.getElementById('circuitMotor').getBoundingClientRect().top + window.scrollY + 20;
+  var motorPositionYB = document.getElementById('circuitMotor').getBoundingClientRect().bottom + window.scrollY + 10;
 
-  var loadPositionX = document.getElementById('load-section').getBoundingClientRect().left + window.scrollX + 50;
-  var loadPositionYT = document.getElementById('load-section').getBoundingClientRect().bottom + window.scrollY - 80;
-  var loadPositionYB = document.getElementById('load-section').getBoundingClientRect().bottom + window.scrollY - 15;
+  var voltPositionX = document.getElementById('voltage-box').getBoundingClientRect().left + window.scrollX + 30;
+  
+  var lightPositionX = document.getElementById('lightImg').getBoundingClientRect().left + window.scrollX + 2;
+  var lightPositionY = document.getElementById('lightImg').getBoundingClientRect().bottom + window.scrollX - 23;
 
   document.getElementById('neutralCircle').setAttribute('cx', smpsPositionXL);
-  document.getElementById('neutralCircle').setAttribute('cy', smpsPositionY - 160);
+  document.getElementById('neutralCircle').setAttribute('cy', smpsPositionY - 50);
 
   document.getElementById('liveCircle').setAttribute('cx', smpsPositionXR);
-  document.getElementById('liveCircle').setAttribute('cy', smpsPositionY - 160);
+  document.getElementById('liveCircle').setAttribute('cy', smpsPositionY - 50);
 
   document.getElementById('mainLine1').setAttribute('x1', smpsPositionXL);
   document.getElementById('mainLine1').setAttribute('y1', smpsPositionY);
   document.getElementById('mainLine1').setAttribute('x2', smpsPositionXL);
-  document.getElementById('mainLine1').setAttribute('y2', smpsPositionY - 153.5);
+  document.getElementById('mainLine1').setAttribute('y2', smpsPositionY - 43.5);
 
   document.getElementById('mainLine2').setAttribute('x1', smpsPositionXR);
   document.getElementById('mainLine2').setAttribute('y1', smpsPositionY);
   document.getElementById('mainLine2').setAttribute('x2', smpsPositionXR);
-  document.getElementById('mainLine2').setAttribute('y2', smpsPositionY - 153.5);
+  document.getElementById('mainLine2').setAttribute('y2', smpsPositionY - 43.5);
   
 
   document.getElementById('smpsLine1').setAttribute('x1', smpsPositionXL);
   document.getElementById('smpsLine1').setAttribute('y1', smpsPositionY);
   document.getElementById('smpsLine1').setAttribute('x2', smpsPositionXL);
-  document.getElementById('smpsLine1').setAttribute('y2', paramPositionYB);
+  document.getElementById('smpsLine1').setAttribute('y2', motorPositionYB);
 
   document.getElementById('smpsLine2').setAttribute('x1', smpsPositionXR);
   document.getElementById('smpsLine2').setAttribute('y1', smpsPositionY);
   document.getElementById('smpsLine2').setAttribute('x2', smpsPositionXR);
-  document.getElementById('smpsLine2').setAttribute('y2', paramPositionYT);
+  document.getElementById('smpsLine2').setAttribute('y2', motorPositionYT);
 
-  document.getElementById('smpsLine3').setAttribute('x1', smpsPositionXL);
-  document.getElementById('smpsLine3').setAttribute('y1', paramPositionYB);
-  document.getElementById('smpsLine3').setAttribute('x2', paramPositionX);
-  document.getElementById('smpsLine3').setAttribute('y2', paramPositionYB);
+  document.getElementById('powerLine1').setAttribute('x1', smpsPositionXR);
+  document.getElementById('powerLine1').setAttribute('y1',spdtPositionY);
+  document.getElementById('powerLine1').setAttribute('x2', spdtPositionXL);
+  document.getElementById('powerLine1').setAttribute('y2', spdtPositionY);
 
-  document.getElementById('smpsLine4').setAttribute('x1', smpsPositionXR);
-  document.getElementById('smpsLine4').setAttribute('y1', paramPositionYT);
-  document.getElementById('smpsLine4').setAttribute('x2', paramPositionX);
-  document.getElementById('smpsLine4').setAttribute('y2', paramPositionYT);
+  document.getElementById('powerLine2').setAttribute('x1', smpsPositionXL);
+  document.getElementById('powerLine2').setAttribute('y1', motorPositionYB);
+  document.getElementById('powerLine2').setAttribute('x2', lightPositionX + 15);
+  document.getElementById('powerLine2').setAttribute('y2', motorPositionYB);
 
-  document.getElementById('batteryLine1').setAttribute('x1', paramPositionXL);
-  document.getElementById('batteryLine1').setAttribute('y1', paramPositionYT);
-  document.getElementById('batteryLine1').setAttribute('x2', batteryPositionXL);
-  document.getElementById('batteryLine1').setAttribute('y2', batteryPositionY);
+  document.getElementById('motorLine1').setAttribute('x1', motorPositionX);
+  document.getElementById('motorLine1').setAttribute('y1', motorPositionYT);
+  document.getElementById('motorLine1').setAttribute('x2', motorPositionX);
+  document.getElementById('motorLine1').setAttribute('y2', spdtPositionY);
 
-  document.getElementById('batteryLine2').setAttribute('x1', paramPositionXR);
-  document.getElementById('batteryLine2').setAttribute('y1', paramPositionYT);
-  document.getElementById('batteryLine2').setAttribute('x2', batteryPositionXR);
-  document.getElementById('batteryLine2').setAttribute('y2', batteryPositionY);
+  document.getElementById('motorLine2').setAttribute('x1', motorPositionX);
+  document.getElementById('motorLine2').setAttribute('y1', motorPositionYB + 1);
+  document.getElementById('motorLine2').setAttribute('x2', motorPositionX);
+  document.getElementById('motorLine2').setAttribute('y2', motorPositionYB-50);
 
-  document.getElementById('loadLine1').setAttribute('x1', paramPositionXR);
-  document.getElementById('loadLine1').setAttribute('y1', paramPositionYT);
-  document.getElementById('loadLine1').setAttribute('x2', loadPositionX);
-  document.getElementById('loadLine1').setAttribute('y2', loadPositionYT);
+  document.getElementById('voltLine1').setAttribute('x1', motorPositionX);
+  document.getElementById('voltLine1').setAttribute('y1', motorPositionYT - 30);
+  document.getElementById('voltLine1').setAttribute('x2', voltPositionX);
+  document.getElementById('voltLine1').setAttribute('y2', motorPositionYT - 30);
 
-  document.getElementById('loadLine2').setAttribute('x1', paramPositionXR);
-  document.getElementById('loadLine2').setAttribute('y1', paramPositionYB);
-  document.getElementById('loadLine2').setAttribute('x2', loadPositionX);
-  document.getElementById('loadLine2').setAttribute('y2', loadPositionYB);
+  document.getElementById('voltLine2').setAttribute('x1', voltPositionX);
+  document.getElementById('voltLine2').setAttribute('y1', motorPositionYT - 30);
+  document.getElementById('voltLine2').setAttribute('x2', voltPositionX);
+  document.getElementById('voltLine2').setAttribute('y2', motorPositionYB);
+
+  document.getElementById('lightLine1').setAttribute('x1', spdtPositionXR);
+  document.getElementById('lightLine1').setAttribute('y1', spdtPositionY);
+  document.getElementById('lightLine1').setAttribute('x2', lightPositionX);
+  document.getElementById('lightLine1').setAttribute('y2', spdtPositionY);
+
+  document.getElementById('lightLine2').setAttribute('x1', lightPositionX);
+  document.getElementById('lightLine2').setAttribute('y1', spdtPositionY);
+  document.getElementById('lightLine2').setAttribute('x2', lightPositionX);
+  document.getElementById('lightLine2').setAttribute('y2', lightPositionY);
+
+  document.getElementById('lightLine3').setAttribute('x1', lightPositionX + 15);
+  document.getElementById('lightLine3').setAttribute('y1', lightPositionY);
+  document.getElementById('lightLine3').setAttribute('x2', lightPositionX + 15);
+  document.getElementById('lightLine3').setAttribute('y2', motorPositionYB);
 
   document.getElementById('main-smpsN').setAttribute('x', smpsPositionXL - 5);
-  document.getElementById('main-smpsN').setAttribute('y', smpsPositionY - 175);
+  document.getElementById('main-smpsN').setAttribute('y', smpsPositionY - 65);
 
   document.getElementById('main-smpsL').setAttribute('x', smpsPositionXR - 5);
-  document.getElementById('main-smpsL').setAttribute('y', smpsPositionY - 175);
+  document.getElementById('main-smpsL').setAttribute('y', smpsPositionY - 65);
 
-  document.getElementById('smps-paramText').setAttribute('x', paramPositionX - 200);
-  document.getElementById('smps-paramText').setAttribute('y', (paramPositionYT + paramPositionYB + 10) / 2);
-
-  document.getElementById('battery-paramText').setAttribute('x', ((paramPositionXL + paramPositionXR) / 2) - (document.getElementById('battery-paramText').getBBox().width/2));
-  document.getElementById('battery-paramText').setAttribute('y', paramPositionYT - 30);
+  document.getElementById('switchText1').setAttribute('x', spdtPositionXL - 50);
+  document.getElementById('switchText1').setAttribute('y', spdtPositionY + 35);
   
-  document.getElementById('load-paramText').setAttribute('x', paramPositionXR + 70);
-  document.getElementById('load-paramText').setAttribute('y', (paramPositionYT + paramPositionYB + 10) / 2);
+  document.getElementById('switchText2').setAttribute('x', spdtPositionXR - 10);
+  document.getElementById('switchText2').setAttribute('y', spdtPositionY + 35);
 
-  //Charges Positions
-  document.getElementById('smps-paramPos').setAttribute('x', paramPositionX - 15);
-  document.getElementById('smps-paramPos').setAttribute('y', paramPositionYT - 10);
-  document.getElementById('smps-paramNeg').setAttribute('x', paramPositionX - 15);
-  document.getElementById('smps-paramNeg').setAttribute('y', paramPositionYB + 15);
-
-  document.getElementById('battery-paramPos').setAttribute('x', paramPositionXL - 15);
-  document.getElementById('battery-paramPos').setAttribute('y', paramPositionYT - 25);
-  document.getElementById('battery-paramNeg').setAttribute('x', paramPositionXR + 10);
-  document.getElementById('battery-paramNeg').setAttribute('y', paramPositionYT - 25);
-
-  document.getElementById('load-paramPos').setAttribute('x', paramPositionXR + 55);
-  document.getElementById('load-paramPos').setAttribute('y', paramPositionYT - 10);
-  document.getElementById('load-paramNeg').setAttribute('x', paramPositionXR + 57);
-  document.getElementById('load-paramNeg').setAttribute('y', paramPositionYB + 15);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -191,12 +189,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const current = voltage > 0 ? totalPower / voltage : 0;
     
     const soc = batteryLevel; // Assuming SOC is directly proportional to battery level
-    const dod = 100 - soc; // DOD is the complement of SOC
+    const dod = 100 - soc; // DOD is the complement of SOC 
   
-    document.getElementById('voltageStat').textContent = `Voltage: ${voltage.toFixed(2)}V`;
-    document.getElementById('currentStat').textContent = `Current: ${current.toFixed(2)}A`;
-    document.getElementById('socStat').textContent = `SOC: ${soc.toFixed(2)}%`;
-    document.getElementById('dodStat').textContent = `DOD: ${dod.toFixed(2)}%`;
   }
   
 
@@ -287,8 +281,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Initialize the progress bar and voltmeter at start
-  progressBar.style.width = '0%'; // Start with an empty progress bar
   updateVoltmeter(); // Start with the voltmeter at 0V
   updateStats();
   drawLines();

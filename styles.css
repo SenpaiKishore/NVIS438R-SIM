@@ -57,7 +57,7 @@ header {
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 0;
+  z-index: 1;
   pointer-events: none;
 }
 
@@ -83,7 +83,7 @@ header {
   padding: 0;
   display: flex;
   flex-direction: column;
-  margin: 10px;
+  margin: 10px 25px;
   height: 100%;
   align-items: center;
   z-index: 1;
@@ -97,9 +97,9 @@ header {
   padding: 20px;
   border: 2px solid #000;
   border-radius: 12px;
-  height: 135px;
-  margin: 80px 0 10px 10px;
-  width: 200px;
+  height: 80px;
+  margin: 50px 0 35px 0px;
+  width: 165px;
   z-index: 1;
 }
 
@@ -112,8 +112,8 @@ header {
   padding: 20px;
   border: 2px solid #000;
   border-radius: 12px;
-  height: 190px;
-  margin: 80px 10px;
+  height: 320px;
+  margin: 5px 0px;
   width: 200px;
   z-index: 1;
 }
@@ -127,24 +127,11 @@ header {
 }
 
 
-
-#smpsLabel {
-  font-size: 16px;
-  font-weight: bold;
-  width: 150px;
-  text-align: center;
-  margin: 0;
-}
-
-
-
 #center-column {
-  flex: 2;
   padding: 0;
   display: flex;
   flex-direction: column;
-  flex-grow: 2;
-  margin: 10px;
+  margin: 10px 65px;
   height: 100%;
   align-items: center;
   z-index: 1;
@@ -155,6 +142,29 @@ header {
   text-align: center;
   font-weight: bold;
 }
+
+.toggle-img{
+  width: 65px;
+  height: 100px;
+  rotate: 90deg;
+}
+
+#switchLabel{
+  font-size: 14px;
+  width: 25%;
+}
+
+#switch-box{
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  background-color: white;
+  border: 2px solid #000;
+  border-radius: 12px;
+  width: 290px;
+  height: 170px;
+}
+
 
 #switchCircuit-box{
   background-color: white;
@@ -176,16 +186,26 @@ header {
   border: 2px solid #000;
   border-radius: 12px;
   padding: 10px;
-  margin: 15px 0;
-  color: red;
+  margin: 22px 0;
+  color: black;
 }
 
-#currentLabel{
+#currentLabel, #voltageLabel{
+  font-weight: bold;
   margin: 0;
 }
 
+#voltage-box {
+  background-color: white;
+  border: 2px solid #000;
+  border-radius: 12px;
+  padding: 10px;
+  margin: 20px 0;
+  color: black;
+}
+
 .tire-img{
-  width: 150px;
+  width: 265px;
   margin: 0 0 10px 0;
 }
 
@@ -195,25 +215,42 @@ header {
   background-color: white;
   border: 2px solid #000;
   border-radius: 12px;
-  width: 50%;
-  height: 205px;
+  width: 55%;
+  height: 315px;
   justify-content: center;
   align-items: center;
 }
 
 #motor-box p {
+  font-weight: bold;
   margin: 0;
 }
 
+#circuitMotor {
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  border: 2px solid #000;
+  border-radius: 12px;
+  width: 205px;
+  height: 205px;
+  justify-content: center;
+  align-items: center;
+  z-index: -1;
+}
+
+.motor-img{
+  width: 165px;
+  margin: 0 0 10px 0;
+}
+
 #right-column {
-  flex: 2;
   padding: 0;
   display: flex;
   flex-direction: column;
-  flex-grow: 2;
-  height: 82vh;
+  height: 595px;
   margin: 10px 10px 10px 0;
-  width: 420px;
+  width: 100%;
   justify-content: space-between;
   z-index: 1;
 }
@@ -239,12 +276,13 @@ header {
   font-size: 16px;
 }
 
+
 #battery-parameters {
   background-color: white;
   border: 2px solid #000;
   border-radius: 12px;
-  width: 420px;
-  padding: 20px;
+  width: 595px;
+  padding: 15px;
 }
 
 #parameters-stats {
@@ -289,30 +327,25 @@ header {
 }
 
 
-.lightButton {
-  background: #fff;
-  font-size: 16px;
-  padding: 10px 15px;
-  margin-bottom: 10px;
-  border: 2px solid black;
-}
-
-.lightButton.active {
-  background-color: #ffd700;
-}
-
 .light-img {
-  margin-left: 15px;
-  width: 50px; /* Or the width that fits your layout */
-  height: auto; /* Maintain aspect ratio */
-  display: block; /* To place it above the button */
-  margin-bottom: 10px; /* Space between the image and button */
+  width: 50px;
+  height: auto;
+  display: block;
+  margin: auto -5px;
+  rotate: 90deg;
 }
 
 .light {
-  text-align: center; /* Center-align the light images and buttons */
-  margin: 5px 25px; /* Provide some spacing between items */
+  display: flex;
+  background: white;
+  text-align: center;
+  width: 85px;
+  height: 85px;
+  border: 2px solid;
+  color: black;
+  border-radius: 50%;
 }
+
 #stats {
   display: flex;
   flex-direction: column;
@@ -333,7 +366,7 @@ header {
 
 #chart-container {
   width: 100%;
-  height: 200px;
+  height: 180px;
   padding-right: 20px;
   flex: 2;
 }
@@ -356,11 +389,6 @@ header {
   background-color: white;
 }
 
-#voltmeter, #ammeter {
-  width: 210px;
-  height: 210px;
-}
-
 #meters-container p{
   text-align: center;
   margin-top: -50px;
@@ -368,18 +396,22 @@ header {
 }
 
 #load-section{
-  background-color: white;
-  border-radius: 12px;
-  margin-top: 12px;
-  height: 225px;
-  border: 2px solid #000;
-}
-.lights {
+  height: 360px;
+  width: 100%;
+  /* border: 2px solid #000; */
   display: flex;
   flex-direction: row;
-  justify-content: space-around;
+  justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
+}
+
+.loads{
+  display: flex;
+  width: 35%;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 65px;
 }
 
 #app > div {
