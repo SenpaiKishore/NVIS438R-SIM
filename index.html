@@ -56,6 +56,9 @@
       <div id="speedControl">
         <p class="speedControlLabel">220V-240V -> 24V SMPS</p>
         <img src="knob.png" id="knob" class="knob-img">
+        <div class="percetangeBox">
+          <p id="knobPercentage">0.00%</p>
+        </div>
         <p class="speedControlLabel">Speed Control</p>
       </div>
     </div>
@@ -77,11 +80,9 @@
     </div>
     <div id="right-column">
       <div id="battery-parameters">
-        <div id="parameters-stats">
           <div id="chart-container">
             <canvas id="voltageChart"></canvas>
           </div>
-        </div>
       </div>
       <div id="load-section">
         <div class="loads">

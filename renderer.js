@@ -3,6 +3,7 @@ let timeData = [];
 let voltageChart;
 let currentVoltage = 0;
 let speedPercentage  = 50;
+let animationFrameId = null
 
 function drawLines() {
    // Drawing the circuit
@@ -127,19 +128,23 @@ document.addEventListener('DOMContentLoaded', () => {
     return yMove * degreesPerPixel;
   }
 
-  function animateTire() {
-    if (isPowerOn && speedPercentage > 0) {
-      // The base speed determines how fast the tire rotates at 100% speed
-      const baseSpeed = 0.5; // degrees per animation frame
-      // Adjust the speed based on the knob's percentage (linear scaling)
-      const speedAdjustment = (speedPercentage / 100) * baseSpeed;
-      tireRotation += speedAdjustment;
-      tireRotation = tireRotation % 360; // Keep the rotation angle within [0, 360]
-      tire.style.transform = `rotate(${tireRotation}deg)`;
+  function calculateRPM(knobPercentage) {
+    return knobPercentage * 800 / 100; // At 100%, RPM is 300
+  }
 
-      requestAnimationFrame(animateTire); // Continue the animation loop
+  function animateTire() {
+    if (isPowerOn) {
+      const degreesPerRPM = 360 / 60; // Each RPM is 360 degrees per minute, or 6 degrees per second
+      const degreesPerFrame = calculateRPM(speedPercentage) * degreesPerRPM / 60; // Convert RPM to degrees per frame, assuming 60 fps
+      tireRotation += degreesPerFrame;
+      tireRotation = tireRotation % 360;
+      tire.style.transform = `rotate(${tireRotation}deg)`;
+      animationFrameId = requestAnimationFrame(animateTire);
+    } else {
+      cancelAnimationFrame(animationFrameId); // Stop the animation when power is off
     }
   }
+  
 
   function updateKnob(value) {
     // Clamp the value to the range -90 to 90
@@ -148,10 +153,28 @@ document.addEventListener('DOMContentLoaded', () => {
     knob.style.transform = `rotate(${value}deg)`;
     // Convert the angle to a percentage and log it
     speedPercentage = (value + 90) / 180 * 100;
-    if (isPowerOn) {
-      requestAnimationFrame(animateTire);
-    }
     console.log(`Knob value: ${speedPercentage.toFixed(2)}%`);
+    updateStats();
+  }
+
+  function updateStats(){
+    document.getElementById('knobPercentage').innerHTML = `${speedPercentage.toFixed(2)}%`;
+  }
+
+  function togglePower() {
+    isPowerOn = !isPowerOn;
+    powerButton.style.backgroundColor = isPowerOn ? 'red' : 'white';
+    powerButton.style.color = isPowerOn ? 'white' : 'black';
+    
+    if (isPowerOn) {
+      // Calculate RPM based on the current knob value
+      const knobValue = (currentRotation + 90) / 180; // Convert knob rotation to percentage
+      speedPercentage = knobValue * 100; // Convert to percentage
+      animateTire(); // Start the tire animation with the current RPM
+    } else {
+      tireRotation = 0;
+      tire.style.transform = 'none';
+    }
   }
 
   knob.addEventListener('mousedown', event => {
@@ -227,18 +250,13 @@ document.addEventListener('DOMContentLoaded', () => {
   }, 500);
 
   // Event listener for the power button
-  powerButton.addEventListener('click', () => {
-    isPowerOn = !isPowerOn;
-    powerButton.style.backgroundColor = isPowerOn ? 'red' : 'white';
-    powerButton.style.color = isPowerOn ? 'white' : 'red';
-    if (isPowerOn) {
-      requestAnimationFrame(animateTire);
-    } else {
-      tire.style.transform = 'none'; // Reset the rotation
-      tireRotation = 0; // Reset the rotation angle
-    }
+  powerButton.addEventListener('click', togglePower);
+  window.addEventListener('load', () => {
+    currentRotation = 0; // This is the default knob rotation angle
+    speedPercentage = 50; // Default speed percentage when the app loads
+    updateKnob(currentRotation);
+    updateStats(); // Update the knob position based on the default value
   });
-
   drawLines();
 });
 
