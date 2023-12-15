@@ -1,9 +1,36 @@
 let voltageData = [];
+let currentData = [];
 let timeData = [];
 let voltageChart;
 let currentVoltage = 0;
+let currentAmpere = 0;
 let speedPercentage  = 50;
+let currentRotationSpeed = 0;
+const maxRotationSpeed = 2800; // Maximum rotation speed in RPM at 100%
+const acceleration = 10;
+const decelerationRate = 10;
 let animationFrameId = null
+let toggleRotation = 0; // Start with toggle at +90 degrees
+let motorToggle = true;
+
+function drawSwitchLine(){
+  var motorPositionX = document.getElementById('circuitMotor').getBoundingClientRect().left + window.scrollX + 105;
+  var spdtPositionXL = document.getElementById('switchCircuit-box').getBoundingClientRect().left + window.scrollX + 20;
+  var spdtPositionXR = document.getElementById('switchCircuit-box').getBoundingClientRect().right + window.scrollX - 20;
+  var spdtPositionY = document.getElementById('switchCircuit-box').getBoundingClientRect().bottom + window.scrollY - 20;
+
+
+  document.getElementById('switchLine').setAttribute('x1', motorPositionX);
+  document.getElementById('switchLine').setAttribute('y1',spdtPositionY);
+  if(toggleRotation == 0){
+    document.getElementById('switchLine').setAttribute('x2', spdtPositionXL);
+    document.getElementById('switchLine').setAttribute('y2', spdtPositionY);
+  } else {
+    document.getElementById('switchLine').setAttribute('x2', spdtPositionXR);
+    document.getElementById('switchLine').setAttribute('y2', spdtPositionY);
+  }
+}
+
 
 function drawLines() {
    // Drawing the circuit
@@ -12,13 +39,13 @@ function drawLines() {
   var smpsPositionY = document.getElementById('powerButton').getBoundingClientRect().top + window.scrollY;
   var smpsPositionXR = document.getElementById('powerButton').getBoundingClientRect().right + window.scrollX;
 
-  var spdtPositionXL = document.getElementById('switchCircuit-box').getBoundingClientRect().left + window.scrollX;
-  var spdtPositionXR = document.getElementById('switchCircuit-box').getBoundingClientRect().right + window.scrollX;
+  var spdtPositionXL = document.getElementById('switchCircuit-box').getBoundingClientRect().left + window.scrollX + 20;
+  var spdtPositionXR = document.getElementById('switchCircuit-box').getBoundingClientRect().right + window.scrollX - 20;
   var spdtPositionY = document.getElementById('switchCircuit-box').getBoundingClientRect().bottom + window.scrollY - 20;
 
   var motorPositionX = document.getElementById('circuitMotor').getBoundingClientRect().left + window.scrollX + 105;
-  var motorPositionYT = document.getElementById('circuitMotor').getBoundingClientRect().top + window.scrollY + 20;
-  var motorPositionYB = document.getElementById('circuitMotor').getBoundingClientRect().bottom + window.scrollY + 10;
+  var motorPositionYT = document.getElementById('circuitMotor').getBoundingClientRect().top + window.scrollY + 25;
+  var motorPositionYB = document.getElementById('circuitMotor').getBoundingClientRect().bottom + window.scrollY + 16;
 
   var voltPositionX = document.getElementById('voltage-box').getBoundingClientRect().left + window.scrollX + 30;
   
@@ -57,6 +84,15 @@ function drawLines() {
   document.getElementById('powerLine1').setAttribute('x2', spdtPositionXL);
   document.getElementById('powerLine1').setAttribute('y2', spdtPositionY);
 
+  document.getElementById('switchCircle1').setAttribute('cx', spdtPositionXL);
+  document.getElementById('switchCircle1').setAttribute('cy', spdtPositionY);
+
+  document.getElementById('switchCircle2').setAttribute('cx', motorPositionX);
+  document.getElementById('switchCircle2').setAttribute('cy', spdtPositionY);
+
+  document.getElementById('switchCircle3').setAttribute('cx', spdtPositionXR);
+  document.getElementById('switchCircle3').setAttribute('cy', spdtPositionY);
+
   document.getElementById('powerLine2').setAttribute('x1', smpsPositionXL);
   document.getElementById('powerLine2').setAttribute('y1', motorPositionYB);
   document.getElementById('powerLine2').setAttribute('x2', lightPositionX + 15);
@@ -73,12 +109,12 @@ function drawLines() {
   document.getElementById('motorLine2').setAttribute('y2', motorPositionYB-50);
 
   document.getElementById('voltLine1').setAttribute('x1', motorPositionX);
-  document.getElementById('voltLine1').setAttribute('y1', motorPositionYT - 30);
+  document.getElementById('voltLine1').setAttribute('y1', motorPositionYT - 35);
   document.getElementById('voltLine1').setAttribute('x2', voltPositionX);
-  document.getElementById('voltLine1').setAttribute('y2', motorPositionYT - 30);
+  document.getElementById('voltLine1').setAttribute('y2', motorPositionYT - 35);
 
   document.getElementById('voltLine2').setAttribute('x1', voltPositionX);
-  document.getElementById('voltLine2').setAttribute('y1', motorPositionYT - 30);
+  document.getElementById('voltLine2').setAttribute('y1', motorPositionYT - 35);
   document.getElementById('voltLine2').setAttribute('x2', voltPositionX);
   document.getElementById('voltLine2').setAttribute('y2', motorPositionYB);
 
@@ -96,6 +132,7 @@ function drawLines() {
   document.getElementById('lightLine3').setAttribute('y1', lightPositionY);
   document.getElementById('lightLine3').setAttribute('x2', lightPositionX + 15);
   document.getElementById('lightLine3').setAttribute('y2', motorPositionYB);
+  drawSwitchLine();
 
   document.getElementById('main-smpsN').setAttribute('x', smpsPositionXL - 5);
   document.getElementById('main-smpsN').setAttribute('y', smpsPositionY - 65);
@@ -113,6 +150,9 @@ function drawLines() {
 
 document.addEventListener('DOMContentLoaded', () => {
   const powerButton = document.getElementById('powerButton');
+  const lightImg = document.getElementById("lightImg").getBoundingClientRect()
+  document.getElementById("lightImgOn").style.top = lightImg.top - 17 + 'px';
+  document.getElementById("lightImgOn").style.left = lightImg.left + 25 + 'px';
 
   let isPowerOn = false;
   const knob = document.getElementById('knob');
@@ -121,6 +161,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let tireRotation = 0;
   let currentRotation = 0;
   const tire = document.getElementById('tire');
+  const toggle = document.getElementById('toggle');
 
   function getRotationDegrees(yMove) {
     // Calculate rotation, with 1 pixel movement corresponding to 1 degree of rotation
@@ -129,21 +170,91 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function calculateRPM(knobPercentage) {
-    return knobPercentage * 800 / 100; // At 100%, RPM is 300
+    return knobPercentage * maxRotationSpeed / 100;
   }
 
-  function animateTire() {
-    if (isPowerOn) {
-      const degreesPerRPM = 360 / 60; // Each RPM is 360 degrees per minute, or 6 degrees per second
-      const degreesPerFrame = calculateRPM(speedPercentage) * degreesPerRPM / 60; // Convert RPM to degrees per frame, assuming 60 fps
-      tireRotation += degreesPerFrame;
-      tireRotation = tireRotation % 360;
-      tire.style.transform = `rotate(${tireRotation}deg)`;
-      animationFrameId = requestAnimationFrame(animateTire);
-    } else {
-      cancelAnimationFrame(animationFrameId); // Stop the animation when power is off
+  function animateTire(timestamp) {
+  let shouldAnimate = isPowerOn && motorToggle;
+  const degreesPerRPM = 6;
+
+  if (shouldAnimate) {
+    const targetRotationSpeed = calculateRPM(speedPercentage);
+     // Each RPM is 6 degrees per second (360 degrees per minute)
+
+    // Accelerate or decelerate to the target speed
+    if (currentRotationSpeed < targetRotationSpeed) {
+      currentRotationSpeed += acceleration;
+    } else if (currentRotationSpeed > targetRotationSpeed) {
+      currentRotationSpeed -= decelerationRate;
+    }
+  } else {
+    // Gradually stop the tire
+    if (currentRotationSpeed > 0) {
+      currentRotationSpeed -= decelerationRate;
     }
   }
+
+  // Ensure speed doesn't go below 0
+  currentRotationSpeed = Math.max(currentRotationSpeed, 0);
+
+  // Update rotation based on current speed
+  const degreesPerFrame = currentRotationSpeed * degreesPerRPM / 60; // Assuming 60 fps
+  tireRotation += degreesPerFrame;
+  tireRotation = tireRotation % 360;
+  tire.style.transform = `rotate(${tireRotation}deg)`;
+
+  // Continue animation if there is still rotation speed
+  if (currentRotationSpeed > 0) {
+    animationFrameId = requestAnimationFrame(animateTire);
+  } else {
+    cancelAnimationFrame(animationFrameId);
+    animationFrameId = null;
+  }
+
+  updateStats();
+  updateVoltageLabel();
+  updateCurrentLabel();
+  updateLightImage();
+}
+
+  
+  function updateVoltageLabel() {
+    const maxVoltage = 24.2; // Max voltage at 100%
+    if (isPowerOn && motorToggle) {
+      currentVoltage = (speedPercentage / 100) * maxVoltage;
+    } else if (!motorToggle){
+      currentVoltage = (currentRotationSpeed / maxRotationSpeed) * maxVoltage;
+    } else {
+      currentVoltage = 0;
+    }
+  
+    document.getElementById('voltageLabel').innerText = `${currentVoltage.toFixed(2)}V`;
+  }
+  function updateCurrentLabel() {
+    const maxCurrent = 1.5; // Maximum current at 2800 RPM
+    if (isPowerOn && motorToggle) {
+      currentAmpere = (speedPercentage / 100) * maxCurrent;
+    } else if (!motorToggle){
+      currentAmpere = (currentRotationSpeed / maxRotationSpeed) * maxCurrent;
+    } else {
+      currentAmpere = 0;
+    }
+    document.getElementById('currentLabel').innerText = `${currentAmpere.toFixed(2)}A`;
+  }
+
+  function updateLightImage() {
+    const lightImg = document.getElementById('lightImgOn');
+    
+    if (motorToggle) {
+ // Path to your light on image
+      lightImg.style.opacity = 0;
+    } else {
+      const opacity = currentRotationSpeed / maxRotationSpeed;
+      lightImg.style.opacity = opacity;
+    }
+  }
+  
+  
   
 
   function updateKnob(value) {
@@ -155,27 +266,53 @@ document.addEventListener('DOMContentLoaded', () => {
     speedPercentage = (value + 90) / 180 * 100;
     console.log(`Knob value: ${speedPercentage.toFixed(2)}%`);
     updateStats();
+    updateVoltageLabel();
+    
   }
 
   function updateStats(){
     document.getElementById('knobPercentage').innerHTML = `${speedPercentage.toFixed(2)}%`;
+    document.getElementById('rpm').innerHTML = `${currentRotationSpeed}RPM`;
   }
 
   function togglePower() {
     isPowerOn = !isPowerOn;
     powerButton.style.backgroundColor = isPowerOn ? 'red' : 'white';
     powerButton.style.color = isPowerOn ? 'white' : 'black';
-    
+  
     if (isPowerOn) {
-      // Calculate RPM based on the current knob value
+      // Recalculate the speedPercentage based on the current knob position
       const knobValue = (currentRotation + 90) / 180; // Convert knob rotation to percentage
       speedPercentage = knobValue * 100; // Convert to percentage
-      animateTire(); // Start the tire animation with the current RPM
+  
+      animateTire(); // Start or resume the animation
     } else {
-      tireRotation = 0;
-      tire.style.transform = 'none';
+      // Set target speed to 0 for smooth deceleration
+      speedPercentage = 0;
     }
+    updateStats();
+    updateVoltageLabel();
+    updateCurrentLabel();
+    updateLightImage();
   }
+
+  toggle.addEventListener('click', () => {
+    toggleRotation = toggleRotation === 0 ? -180 : 0;
+    motorToggle = toggleRotation === 0;
+  
+    toggle.style.transform = `rotate(${toggleRotation}deg)`;
+    drawSwitchLine();
+    console.log(motorToggle);
+    if (motorToggle && isPowerOn) {
+      const knobValue = (currentRotation + 90) / 180; // Convert knob rotation to percentage
+      speedPercentage = knobValue * 100;
+      animateTire();
+    } else {
+      // Set target speed to 0 for smooth deceleration
+      speedPercentage = 0;
+    }
+  });
+  
 
   knob.addEventListener('mousedown', event => {
     isDragging = true;
@@ -221,6 +358,13 @@ document.addEventListener('DOMContentLoaded', () => {
         backgroundColor: 'rgba(0, 123, 255, 0.5)',
         borderColor: 'rgba(0, 123, 255, 1)',
         borderWidth: 1
+      },
+      {
+        label: 'Current',
+        data: currentData,
+        backgroundColor: 'rgba(255, 99, 132, 0.5)',
+        borderColor: 'rgba(255, 99, 132, 1)',
+        borderWidth: 1
       }]
     },
     options: {
@@ -228,8 +372,8 @@ document.addEventListener('DOMContentLoaded', () => {
         xAxes: [{
           type: 'realtime',
           realtime: {
-            duration: 20000,  // data in the past 20000 ms will be displayed
-            refresh: 1000,    // on-screen refresh rate of 1000 ms
+            duration: 20000,
+            refresh: 1000,
           }
         }],
         yAxes: [{
@@ -246,8 +390,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const now = new Date().toLocaleTimeString();
     timeData.push(now);
     voltageData.push(currentVoltage);
+    currentData.push(currentAmpere); // Assuming calculateCurrent() returns the current value
     voltageChart.update();
   }, 500);
+  
 
   // Event listener for the power button
   powerButton.addEventListener('click', togglePower);
@@ -255,9 +401,10 @@ document.addEventListener('DOMContentLoaded', () => {
     currentRotation = 0; // This is the default knob rotation angle
     speedPercentage = 50; // Default speed percentage when the app loads
     updateKnob(currentRotation);
-    updateStats(); // Update the knob position based on the default value
   });
   drawLines();
+  updateStats();
+  updateVoltageLabel();
 });
 
 window.addEventListener('resize', drawLines);

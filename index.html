@@ -14,7 +14,7 @@
         <img id="header-logo" src="nvisLogo.ico" alt="Logo">
         <div id="header-company">Nvis Technologies Pvt Ltd</div>
     </div>
-    <div id="header-title">Li-ion Battery Charging Simulation</div>
+    <div id="header-title">Regenerative Charging and Braking System</div>
   </header>
 
   <div id="app">
@@ -40,6 +40,12 @@
       <line class="lines" id="lightLine1"/>
       <line class="lines" id="lightLine2"/>
       <line class="lines" id="lightLine3"/>
+
+      <line class="lines" id="switchLine"/>
+
+      <circle id="switchCircle1" r="4" stroke="black" stroke-width="2" fill="black" />
+      <circle id="switchCircle2" r="4" stroke="black" stroke-width="2" fill="black" />
+      <circle id="switchCircle3" r="4" stroke="black" stroke-width="2" fill="black" />
 
       <text class="svgLabels" id="main-smpsText">230v AC</text>
       <text class="svgLabels" id="switchText1">Motoring</text>
@@ -91,11 +97,15 @@
           </div>
           <div class="light">
             <img src="lightoff.png" id="lightImg" class="light-img">
+            <img src="lighton.png" id="lightImgOn" class="light-img">
           </div>
         </div>
         <div id="motor-box">
           <img src="tire.png" id="tire" class="tire-img">
-          <p>PMSM Motor</p>
+          <div class="rpm-container">
+            <p id="rpm">0 RPM</p>
+          </div>
+          <p class="motorLabel">PMSM Motor</p>
         </div>
       </div>
     </div>
