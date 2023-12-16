@@ -2,7 +2,7 @@
 
 Virtual simulation lab for the Regenerative Charging and Braking System(NVIS425A) module, which is a educational equipment developed by NVIS Technologies Pvt Ltd. 
 
-<img src="pictures/overview.png" width="700">
+<img align="center" src="pictures/overview.png" width="700">
 
 ## Getting Started
 
