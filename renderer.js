@@ -1,5 +1,6 @@
 let voltageData = [];
 let currentData = [];
+let powerData = [];
 let timeData = [];
 let voltageChart;
 let currentVoltage = 0;
@@ -7,8 +8,8 @@ let currentAmpere = 0;
 let speedPercentage  = 50;
 let currentRotationSpeed = 0;
 const maxRotationSpeed = 2800; // Maximum rotation speed in RPM at 100%
-const acceleration = 10;
-const decelerationRate = 10;
+const acceleration = 7;
+const decelerationRate = 7;
 let animationFrameId = null
 let toggleRotation = 0; // Start with toggle at +90 degrees
 let motorToggle = true;
@@ -347,8 +348,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
   // Initialize the voltmeter with a value of 0 because the power is off
-  const ctx = document.getElementById('voltageChart').getContext('2d');
-  voltageChart = new Chart(ctx, {
+  const voltageCtx = document.getElementById('voltageChart').getContext('2d');
+  voltageChart = new Chart(voltageCtx, {
     type: 'line',
     data: {
       labels: timeData,
@@ -358,8 +359,33 @@ document.addEventListener('DOMContentLoaded', () => {
         backgroundColor: 'rgba(0, 123, 255, 0.5)',
         borderColor: 'rgba(0, 123, 255, 1)',
         borderWidth: 1
+      }]
+    },
+    options: {
+      scales: {
+        xAxes: [{
+          type: 'realtime',
+          realtime: {
+            duration: 20000,
+            refresh: 1000,
+          }
+        }],
+        yAxes: [{
+          ticks: {
+            beginAtZero: true
+          }
+        }]
       },
-      {
+      maintainAspectRatio: false
+    }
+  });
+
+  const currentCtx = document.getElementById('currentChart').getContext('2d');
+  currentChart = new Chart(currentCtx, {
+    type: 'line',
+    data: {
+      labels: timeData,
+      datasets: [{
         label: 'Current',
         data: currentData,
         backgroundColor: 'rgba(255, 99, 132, 0.5)',
@@ -386,12 +412,56 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  const powerCtx = document.getElementById('powerChart').getContext('2d');
+  powerChart = new Chart(powerCtx, {
+    type: 'line',
+    data: {
+      labels: timeData,
+      datasets: [{
+        label: 'Power',
+        data: powerData,
+        backgroundColor: 'rgba(75, 192, 192, 0.5)',
+        borderColor: 'rgba(75, 192, 192, 1)',
+        borderWidth: 1
+      }]
+    },
+    options: {
+      scales: {
+        xAxes: [{
+          type: 'realtime',
+          realtime: {
+            duration: 20000,
+            refresh: 1000,
+          }
+        }],
+        yAxes: [{
+          ticks: {
+            beginAtZero: true
+          }
+        }]
+      },
+      maintainAspectRatio: false
+    }
+  });
+
   setInterval(() => {
     const now = new Date().toLocaleTimeString();
+
+    if (timeData.length > 30) {
+      timeData.shift(); // Remove the oldest time data
+      voltageData.shift(); // Remove the oldest voltage data
+      currentData.shift();
+      powerData.shift(); // Remove the oldest current data
+    }
+
     timeData.push(now);
     voltageData.push(currentVoltage);
-    currentData.push(currentAmpere); // Assuming calculateCurrent() returns the current value
+    currentData.push(currentAmpere);
+    powerData.push(currentAmpere * currentVoltage);
+
     voltageChart.update();
+    currentChart.update();
+    powerChart.update();
   }, 500);
   
 
